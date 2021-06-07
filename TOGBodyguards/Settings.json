@@ -1,0 +1,13 @@
+﻿{
+  "bodyguards": {
+    "BG_Tiberias": true,
+    "BG_Julia": true,
+    "BG_Aethelwulf": true,
+    "BG_Helga": true,
+    "BG_Yoshida": true,
+    "BG_Ragnar": true,
+    "BG_Erik": true,
+    "BG_Fury": true,
+    "BG_Alessia": true
+  }
+}

@@ -1,0 +1,7 @@
+﻿{
+  "Mod_Name": "TOGBodyguards",
+  "Author": "lilhusky",
+  "dllName": "TOGBodyguards",
+  "className": "TOGBodyguardsPatch",
+  "startMethod": "Inject"
+}
