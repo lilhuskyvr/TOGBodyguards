@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using HarmonyLib;
+using MLSpace;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -106,9 +107,9 @@ namespace TOGBodyguards
                 Transform Limb,
                 Stats enemy,
                 Vector3 HitVel,
-                bool isStabbing,
-                bool isOnFire,
-                bool isHeadShot,
+                ref bool isStabbing,
+                ref bool isOnFire,
+                ref bool isHeadShot,
                 WepDesc wp,
                 Vector3 ImpactVel,
                 bool isProj,
@@ -119,7 +120,14 @@ namespace TOGBodyguards
             {
                 if (!__instance.config.isCampaign && !__instance.config.isLobby && !__instance.config.isArena &&
                     __instance.isBG)
+                {
                     dam = 0;
+                    isStabbing = false;
+                    isHeadShot = false;
+                    isOnFire = false;
+                    __instance.isGrabbed = false;
+                    Limb.GetComponent<BodyColliderScript>().critical = false;
+                }
             }
         }
     }
