@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using HarmonyLib;
 using MLSpace;
-using Newtonsoft.Json;
+using TOGModFramework;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using Valve.Newtonsoft.Json;
+using Object = UnityEngine.Object;
 
 namespace TOGBodyguards
 {
     public class TOGBodyguardsPatch : MonoBehaviour
     {
         private Harmony _harmony;
+        public string modName = "TOGBodyguards";
 
         public void Inject()
         {
@@ -27,24 +26,20 @@ namespace TOGBodyguards
             {
                 Debug.Log(ex.Message);
             }
+
+            EventManager.OnPlayerLoaded += EventManagerOnOnPlayerLoaded;
         }
 
-        [HarmonyPatch(typeof(VRCharController))]
-        [HarmonyPatch("EnableAvatar")]
-        // ReSharper disable once UnusedType.Local
-        private static class VRCharControllerEnableAvatarPatch
+        private void EventManagerOnOnPlayerLoaded()
         {
-            [HarmonyPostfix]
-            private static void Postfix(VRCharController __instance)
-            {
-                var bodyguardSpawnerController =
-                    __instance.config.gameObject.AddComponent<BodyguardSpawnerController>();
-                var jsonInput = File.ReadAllText(Application.streamingAssetsPath +
-                                                 "/Mods/TOGBodyguards/Settings.json");
+            var bodyguardSpawnerController =
+                ConfigManager.local.gameObject.AddComponent<BodyguardSpawnerController>();
 
-                var data = JsonConvert.DeserializeObject<BodyguardSpawnerControllerData>(jsonInput);
-                bodyguardSpawnerController.bodyguards = data.bodyguards;
-            }
+            var jsonInput = FileManager.GetModJsonData(modName);
+
+            var data = JsonConvert.DeserializeObject<BodyguardSpawnerControllerData>(jsonInput);
+            bodyguardSpawnerController.bodyguards = data.bodyguards;
+            bodyguardSpawnerController.isInvincible = data.isInvincible;
         }
 
         [HarmonyPatch(typeof(NPCSpawner))]
@@ -57,18 +52,16 @@ namespace TOGBodyguards
             {
                 if (!__instance.isSpawnBG)
                 {
-                    BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-                                             | BindingFlags.Static;
-                    GameConfigManager config =
-                        __instance.GetType().GetField("config", bindFlags).GetValue(__instance) as GameConfigManager;
-                    GameBrain brain =
-                        __instance.GetType().GetField("brain", bindFlags).GetValue(__instance) as GameBrain;
+                    GameConfigManager config = ConfigManager.local;
+                    GameBrain brain = ConfigManager.local.brain;
+
 
                     if (!config.isCampaign && !config.isLobby && !config.isArena)
                     {
                         __instance.isSpawnBG = true;
-                        var bodyguardSpawnerController = config.gameObject.GetComponent<BodyguardSpawnerController>();
-                        //spawn body guard
+                        var bodyguardSpawnerController =
+                            ConfigManager.local.gameObject.GetComponent<BodyguardSpawnerController>();
+
                         for (int index = 0; index < __instance.BodyGuards.Count; ++index)
                         {
                             var bodyguardName = __instance.BodyGuards[index].name;
@@ -77,7 +70,7 @@ namespace TOGBodyguards
                                 continue;
                             if (!bodyguardSpawnerController.bodyguards[bodyguardName])
                                 continue;
-                            GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(
+                            GameObject gameObject = Instantiate(
                                 __instance.BodyGuards[index],
                                 config.mc.Player.transform.position + 2 * config.mc.Player.transform.forward,
                                 config.mc.Player.transform.rotation);
@@ -89,8 +82,6 @@ namespace TOGBodyguards
                             gameObject.SetActive(true);
                             brain.T1.Add(gameObject.GetComponent<Stats>());
                         }
-
-                        __instance.GetType().GetField("brain", bindFlags).SetValue(__instance, brain);
                     }
                 }
             }
@@ -118,15 +109,18 @@ namespace TOGBodyguards
                 bool isBeatLimb,
                 bool isCut = false)
             {
-                if (!__instance.config.isCampaign && !__instance.config.isLobby && !__instance.config.isArena &&
-                    __instance.isBG)
+                if (__instance.config.gameObject.GetComponent<BodyguardSpawnerController>().isInvincible)
                 {
-                    dam = 0;
-                    isStabbing = false;
-                    isHeadShot = false;
-                    isOnFire = false;
-                    __instance.isGrabbed = false;
-                    Limb.GetComponent<BodyColliderScript>().critical = false;
+                    if (!__instance.config.isCampaign && !__instance.config.isLobby && !__instance.config.isArena &&
+                        __instance.isBG)
+                    {
+                        dam = 0;
+                        isStabbing = false;
+                        isHeadShot = false;
+                        isOnFire = false;
+                        __instance.isGrabbed = false;
+                        Limb.GetComponent<BodyColliderScript>().critical = false;
+                    }
                 }
             }
         }

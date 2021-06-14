@@ -15,5 +15,7 @@ namespace TOGBodyguards
             "BG_Fury",
             "BG_Alessia"
         };
+
+        public bool isInvincible;
     }
 }

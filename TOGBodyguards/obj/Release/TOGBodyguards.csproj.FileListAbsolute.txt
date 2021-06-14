@@ -5,5 +5,3 @@ C:\Users\nikon\RiderProjects\TOGBodyguards\TOGBodyguards\obj\Release\TOGBodyguar
 C:\Users\nikon\RiderProjects\TOGBodyguards\TOGBodyguards\obj\Release\TOGBodyguards.pdb
 D:\Steam\steamapps\common\Tales Of Glory\TalesOfGlory_Data\StreamingAssets\Mods\TOGBodyguards\script_assembly_desc.json
 D:\Steam\steamapps\common\Tales Of Glory\TalesOfGlory_Data\StreamingAssets\Mods\TOGBodyguards\Settings.json
-D:\Steam\steamapps\common\Tales Of Glory\TalesOfGlory_Data\StreamingAssets\Mods\TOGBodyguards\System.Data.dll
-D:\Steam\steamapps\common\Tales Of Glory\TalesOfGlory_Data\StreamingAssets\Mods\TOGBodyguards\System.Numerics.dll

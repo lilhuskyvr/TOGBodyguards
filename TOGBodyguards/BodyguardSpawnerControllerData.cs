@@ -7,5 +7,6 @@ namespace TOGBodyguards
     public class BodyguardSpawnerControllerData
     {
         public Dictionary<string, bool> bodyguards { get; set; }
+        public bool isInvincible { get; set; }
     }
 }
